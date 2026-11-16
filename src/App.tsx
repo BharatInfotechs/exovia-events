@@ -1442,6 +1442,8 @@ function SiteApp(){
 
   const [menu,setMenu]=useState(false);
 
+  const [callOptionsOpen, setCallOptionsOpen] = useState(false);
+
   const [sent,setSent]=useState(false);
 
   const [activeSeo,setActiveSeo]=useState<string|null>(null);
@@ -2447,13 +2449,58 @@ const submit = async (e: FormEvent<HTMLFormElement>) => {
 
     </footer>
 
-    <div className="floatStack" aria-label="Exovia quick actions">
+<div className="floatStack" aria-label="Exovia quick actions">
+  <div style={{ position: 'relative' }}>
+    <button
+      type="button"
+      className="floatCall"
+      onClick={() => setCallOptionsOpen(!callOptionsOpen)}
+      aria-expanded={callOptionsOpen}
+      aria-label="Choose a number to call Exovia Events"
+    >
+      <span>☎</span>
+      <b>Call Now</b>
+    </button>
 
-      <a className="floatCall" href={`tel:${CALL_NUMBER}`} aria-label="Call Exovia Events"><span>☎</span><b>Call Now</b></a>
+    {callOptionsOpen && (
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 'calc(100% + 10px)',
+          right: 0,
+          width: 230,
+          padding: 14,
+          borderRadius: 12,
+          background: '#171717',
+          border: '1px solid rgba(255,255,255,.2)',
+          boxShadow: '0 8px 30px rgba(0,0,0,.35)',
+          display: 'grid',
+          gap: 12,
+          zIndex: 9999,
+        }}
+      >
+        <b style={{ color: '#fff' }}>Call Exovia Events</b>
 
-      <button className="floatChat" onClick={()=>openWhatsApp('Hi Exovia Events! I need help with an event.')} aria-label="Chat with Exovia"><span>💬</span><b>Chat</b></button>
+        <a href={`tel:${CALL_NUMBER}`} style={{ color: '#fff' }}>
+          ☎ +91 88815 22092
+        </a>
 
-    </div>
+        <a href="tel:+918181918134" style={{ color: '#fff' }}>
+          ☎ +91 81819 18134
+        </a>
+      </div>
+    )}
+  </div>
+
+  <button
+    className="floatChat"
+    onClick={() => openWhatsApp('Hi Exovia Events! I need help with an event.')}
+    aria-label="Chat with Exovia"
+  >
+    <span>💬</span>
+    <b>Chat</b>
+  </button>
+</div>
 
   </div>
 
