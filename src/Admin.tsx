@@ -1378,6 +1378,39 @@ function EventManager({
     }
   };
 
+  const deleteEvent = async (event: any) => {
+    const confirmed = window.confirm(
+      `Permanently delete "${event.name}" and all its event dates and tickets? This action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    setSaving(true);
+
+    try {
+      const { error } = await supabase.rpc('delete_event_safely', {
+        p_event_id: event.id,
+      });
+
+      if (error) throw error;
+
+      if (selectedEvent?.id === event.id) {
+        setSelectedEvent(null);
+      }
+
+      await loadEvents();
+      flash(`Event "${event.name}" deleted successfully.`);
+    } catch (error) {
+      flash(
+        error instanceof Error
+          ? `Could not delete event: ${error.message}`
+          : 'Could not delete event.'
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="adminContent">
       <section className="panel">
@@ -1561,13 +1594,28 @@ function EventManager({
               <small>{event.description || 'No description added.'}</small>
             </div>
 
-            <div className="formActions" style={{ marginTop: 14 }}>
-              <button onClick={() => setSelectedEvent(
-                selectedEvent?.id === event.id ? null : event
-              )}>
-                {selectedEvent?.id === event.id ? 'Close date form' : '+ Add another date'}
-              </button>
-            </div>
+          
+  <div className="formActions" style={{ marginTop: 14 }}>
+    <button
+      onClick={() => setSelectedEvent(
+        selectedEvent?.id === event.id ? null : event
+      )}
+    >
+      {selectedEvent?.id === event.id
+        ? 'Close date form'
+        : '+ Add another date'}
+    </button>
+
+    <button
+      className="ghostBtn"
+      onClick={() => void deleteEvent(event)}
+      disabled={saving}
+      style={{ color: '#ef4444', borderColor: '#ef4444' }}
+    >
+      {saving ? 'Processing…' : 'Delete Event'}
+    </button>
+  </div>
+
 
             {selectedEvent?.id === event.id && (
               <div className="inlineForm">
